@@ -12,7 +12,7 @@ python -m venv env
 env\Scripts\activate
 
 # Activate Enviroment for mac
-source venv/bin/activate
+source env/bin/activate
 
 
 # Install dependencies
