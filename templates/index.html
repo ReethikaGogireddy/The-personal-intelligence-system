@@ -3,8 +3,8 @@
 <head>
     <title>Test App</title>
     <style>
-        body { font-family: Arial; text-align: center; padding: 50px; background: #f0f0f0; }
-        .container { background: white; padding: 30px; border-radius: 8px; max-width: 500px; margin: 0 auto; }
+        body { display: flex; flex-direction: column; align-items: center; font-family: Arial; text-align: center; padding-top: 60px; padding: 50px; background: #f0f0f0; }
+        .container { background: white; padding: 30px; border-radius: 8px; max-width: 500px;  margin-top: 20px; text-align: left;justify-content: center; }
         h1 { color: #333; }
         button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
         button:hover { background: #0056b3; }
@@ -12,25 +12,23 @@
         .status { margin: 15px 0; font-size: 18px; font-weight: bold; }
         .success { color: #28a745; }
         .error { color: #dc3545; }
+        .form-row{  margin-bottom: 12px;}
+        .form-row label { display: block; margin-bottom: 4px;}
+        .form-row input { width: 100%; padding: 8px; box-sizing: border-box; }
+        .submit-btn { width: 100%; margin-top: 10px;}
+        .navbar { width: 100%; background: #007bff; padding: 10px 0; text-align: center; position: fixed; top: 0; left: 0; }
+       .navbar a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+       .navbar a:hover { text-decoration: underline;}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✓ Frontend is running</h1>
-        WICS
-        <button onclick="callAPI()">Test API</button>
-        
-        <div id="result">
-            <p id="resultText"></p>
-        </div>
-    </div>
     
     <div class = "container">
         <h1> Self Sync </h1>
         <p>A simple daily dashboard for users to log in data on  how they spent their day, sleep, work, exercise, mood and energy levels. Patterns are analzyed and identified in order to improve productivity and well-being. The causes of burnout or stress are listed. The goal: helping users make smarter decisions by relying on facts instead of feelings. After 30-60 days, the system analyzes their personal data to detect patterns and predict how likely they are to feel productive or experience burnout.</p>
         <!-- Try to make a drop down calender-->
         <!--DATE BUTTON-->
-         <form action="/dashboard.html" method="POST" class="form-container">
+         <form  id="dailyForm" class="form-container">
 
         <div class="form-row">
             <label>Date (dd/mm/yyyy):</label>
@@ -39,37 +37,37 @@
 
         <div class="form-row">
             <label>Sleep:</label>
-            <input type="text" name="sleep">
+            <input type="text" name="sleep_hours" placeholder="Sleep Hours">
         </div>
 
         <div class="form-row">
             <label>Mood:</label>
-            <input type="text" name="mood">
+            <input type="text" name="mood" placeholder="Mood (1-5)">
         </div>
 
         <div class="form-row">
             <label>Energy:</label>
-            <input type="text" name="energy">
+            <input type="text" name="energy" placeholder="Energy (1-5)">
         </div>
 
         <div class="form-row">
             <label>Work Hours:</label>
-            <input type="text" name="work">
+            <input type="text" name="work_hours" placeholder="Work Hours">
         </div>
 
         <div class="form-row">
             <label>Exercise Minutes:</label>
-            <input type="text" name="exercise">
+            <input type="text" name="exercise_minutes" placeholder="Exercise Minutes">
         </div>
 
         <div class="form-row">
             <label>Stress:</label>
-            <input type="text" name="stress">
+            <input type="text" name="stress" placeholder="Stress (1-5)">
         </div>
 
         <div class="form-row">
             <label>Notes:</label>
-            <input type="text" name="notes">
+            <input type="text" name="notes" placeholder="Notes">
         </div>
 
         <button type="submit" class="submit-btn">Submit</button>
@@ -79,21 +77,30 @@
    
 
     <script>
-        function callAPI() {
-            fetch('/api/test')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('resultText').innerHTML = 
-                        '<p class="status success">✓ API is called</p>' +
-                        '<p><strong>' + data.message + '</strong></p>';
-                    document.getElementById('result').style.display = 'block';
-                })
-                .catch(error => {
-                    document.getElementById('resultText').innerHTML = 
-                        '<p class="status error">✗ API Error: ' + error + '</p>';
-                    document.getElementById('result').style.display = 'block';
-                });
-        }
+     document.getElementById('dailyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData(e.target);
+      const payload = Object.fromEntries(formData.entries());
+
+      const logResponse = await fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const logData = await logResponse.json();
+      if (!logResponse.ok) {
+        throw new Error(logData.message || 'Failed to save log');
+      }
+
+      alert('Saved successfully!');
+      window.location.href = "/dashboard";
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  });
     </script>
 </body>
 </html>

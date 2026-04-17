@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Blueprint, request, jsonify
 import pickle
 import numpy as np
@@ -21,7 +22,7 @@ def get_features():
         if v is None:
             return None, f"Missing field: {f}"
         vals.append(float(v))
-    return np.array(vals).reshape(1, -1), None
+    return pd.DataFrame([vals], columns=FEATURES), None
 
 @analytics_bp.route('/api/predict/productivity', methods=['GET', 'POST'])
 def predict_productivity():

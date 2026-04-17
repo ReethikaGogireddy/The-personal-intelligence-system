@@ -10,11 +10,11 @@ def train_and_save_models():
 
     data = pd.DataFrame({
         'sleep_hours':      np.random.uniform(4, 10, n),
-        'mood':             np.random.randint(1, 6, n),
-        'energy':           np.random.randint(1, 6, n),
+        'mood':             np.random.randint(1, 5, n),
+        'energy':           np.random.randint(1, 5, n),
         'work_hours':       np.random.uniform(2, 12, n),
         'exercise_minutes': np.random.uniform(0, 90, n),
-        'stress':           np.random.randint(1, 6, n),
+        'stress':           np.random.randint(1, 5, n),
     })
 
     data['productivity'] = (

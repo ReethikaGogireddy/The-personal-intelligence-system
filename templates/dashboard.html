@@ -4,23 +4,50 @@
     <title>Test App</title>
     <style>
         body { font-family: Arial; text-align: center; padding: 50px; background: #f0f0f0; }
-        .container { background: white; padding: 30px; border-radius: 8px; max-width: 500px; margin: 0 auto; }
+        .container { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 40px auto; }
         h1 { color: #333; }
-        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button { margin-top:15px; width: 100%; background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
         button:hover { background: #0056b3; }
         #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; }
         .status { margin: 15px 0; font-size: 18px; font-weight: bold; }
         .success { color: #28a745; }
         .error { color: #dc3545; }
+        .form-row { display: flex; flex-direction: column; margin-bottom: 12px; text-align: left;}
+        .form-row input { padding: 8px; font-size: 14px; margin-top: 4px;}
+        #predictionOutput { margin-top: 15px; font-weight: bold;}
     </style>
 </head>
 <body>
-    <div class = "container">
+    <div class = "container form-row">
         <h1> Dashboard </h1>
         <p> Want to know if you will be productive tomorrow? </p>
+    
+  <button id="predictButton">Predict</button>
+  <p id="predictionOutput"></p>
     </div>
+<script>
+  document.getElementById('predictButton').addEventListener('click', async () => {
+  try {
+    const log = await fetch('/api/log/latest').then(res => res.json());
 
-    <button id="predictButton">Predict</button>
-    <p id = "predictionOutput"></p>
+    const qs = new URLSearchParams({
+      sleep_hours: log.sleep_hours,
+      mood: log.mood,
+      energy: log.energy,
+      work_hours: log.work_hours,
+      exercise_minutes: log.exercise_minutes,
+      stress: log.stress
+    });
+
+    const prod = await fetch('/api/predict/productivity?' + qs).then(r => r.json());
+    const burn = await fetch('/api/predict/burnout?' + qs).then(r => r.json());
+
+    document.getElementById('predictionOutput').innerText =
+      `Productivity: ${prod.predicted_productivity_score}, Burnout: ${burn.burnout_risk}`;
+  } catch (err) {
+    document.getElementById('predictionOutput').innerText = 'Error: ' + err.message;
+  }
+});
+</script>
 </body>
 </html>

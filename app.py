@@ -11,6 +11,12 @@ DATABASE = 'database.db'
 def index():
     return render_template('index.html')
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
+
 @app.route('/api/test')
 def test_api():
     return jsonify({'message': 'Backend is running!', 'status': 'success'})
@@ -197,6 +203,17 @@ def delete_log(log_id):
             'message': 'Failed to delete log',
             'error': str(e)
         }), 500
+    
+@app.route('/api/log/latest')
+def get_latest_log():
+    conn = get_db_connection()
+    log = conn.execute(
+        "SELECT * FROM logs ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    conn.close()
+
+    return jsonify(dict(log)) if log else jsonify({})
 
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True, port=5000)

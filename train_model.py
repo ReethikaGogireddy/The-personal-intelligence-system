@@ -7,25 +7,25 @@ np.random.seed(42)
 n = 200
 
 # Features: sleep_hours, mood, energy, work_hours, exercise_minutes, stress
-sleep = np.random.uniform(4, 9, n)
+sleep_hours = np.random.uniform(4, 9, n)
 mood = np.random.randint(1, 6, n)
 energy = np.random.randint(1, 6, n)
 work_hours = np.random.uniform(4, 12, n)
-exercise = np.random.uniform(0, 90, n)
+exercise_minutes = np.random.uniform(0, 90, n)
 stress = np.random.randint(1, 6, n)
 
-X = np.column_stack([sleep, mood, energy, work_hours, exercise, stress])
+X = np.column_stack([sleep_hours, mood, energy, work_hours, exercise_minutes, stress])
 
 # Productivity score (1-10): more sleep/mood/energy = higher, more stress = lower
 productivity = (
-    sleep * 0.5 + mood * 0.8 + energy * 0.9
-    - stress * 0.7 + exercise * 0.02
+    sleep_hours * 0.5 + mood * 0.8 + energy * 0.9
+    - stress * 0.7 + exercise_minutes * 0.02
     - work_hours * 0.1 + np.random.normal(0, 0.5, n)
 )
 productivity = np.clip(productivity, 1, 10)
 
 # Burnout: high stress + low sleep + low mood = burnout
-burnout_score = stress * 1.5 - sleep * 0.5 - mood * 0.4 - energy * 0.3
+burnout_score = stress * 1.5 - sleep_hours * 0.5 - mood * 0.4 - energy * 0.3
 burnout = np.where(burnout_score > 4, 2, np.where(burnout_score > 2, 1, 0))
 # 0 = Low, 1 = Medium, 2 = High
 
